@@ -60,7 +60,7 @@ class CtagsController{
         console.log('Start ctags: ' + command);
         exec(command,{cwd:currentPath},function(err,stdout,stderr){
             console.log(stdout)
-            vscode.window.showInformationMessage('Ctags has been finished the job.');
+            vscode.window.showInformationMessage('Ctag has been finished the job.');
         });
     } 
 }

@@ -1,0 +1,38 @@
+{
+	"name": "ctags",
+	"displayName": "ctags",
+	"description": "",
+	"version": "0.0.1",
+	"publisher": "hcyang",
+	"engines": {
+		"vscode": "^0.10.6"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:extension.sayHello",
+        "onCommand:extension.ctags"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"commands": [
+        {
+            "command": "extension.ctags",
+            "title": "Run CTAGs"
+        },
+        {
+			"command": "extension.sayHello",
+			"title": "Hello World"
+		}]    
+	},
+	"scripts": {
+		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"typescript": "^1.7.5",
+		"vscode": "^0.11.0"
+	}
+}

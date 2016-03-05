@@ -12,15 +12,20 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.sayHello",
-        "onCommand:extension.ctags"
+        "onCommand:extension.ctag_generate",
+        "onCommand:extension.ctag_search"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
 		"commands": [
         {
-            "command": "extension.ctags",
-            "title": "Run CTAGs"
+            "command": "extension.ctag_generate",
+            "title": "Generate tag"
         },
+        {
+            "command": "extension.ctag_search",
+            "title": "Search tag"
+        },        
         {
 			"command": "extension.sayHello",
 			"title": "Hello World"

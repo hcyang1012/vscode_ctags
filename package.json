@@ -5,7 +5,7 @@
 	"version": "0.0.1",
 	"publisher": "hcyang",
 	"engines": {
-		"vscode": "^0.10.6"
+		"vscode": "0.10.x"
 	},
 	"categories": [
 		"Other"

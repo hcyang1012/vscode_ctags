@@ -172,5 +172,5 @@ function print_error(msg :string){
 }
 
 function print_info(msg :string){
-    //window.showInformationMessage(msg);
+    window.showInformationMessage(msg);
 }

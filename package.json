@@ -20,11 +20,11 @@
 		"commands": [
         {
             "command": "extension.ctag_generate",
-            "title": "Generate tag"
+            "title": "CTAGS:Generate"
         },
         {
             "command": "extension.ctag_search",
-            "title": "Search tag"
+            "title": "CTAGS:Search"
         },        
         {
 			"command": "extension.sayHello",

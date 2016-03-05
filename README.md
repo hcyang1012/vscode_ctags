@@ -1,13 +1,14 @@
-# README
-## This is the README for your extension "ctags" 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# VScode-Ctags 
+## This is the [Visual Studio Code](https://code.visualstudio.com/) extension to use [CTAGS](http://ctags.sourceforge.net/) 
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+### Prerequisites:
+* OS : Windows (Test OK) / Linux / OSX
+* [CTAGS](http://ctags.sourceforge.net/)
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+### Howto:
+* Install ctag and the path of 'ctag' command 'MUST' be in your 'PATH' environment variable. 
+* Open a source code directory using 'Open Folder'
+* Generate the ctag file using 'CTAGS:Generate' command. (Press 'F1' key and type 'CTAGS:Generate')
+* After the ctag file is generated, search the symbol using 'CTAGS:Search' command. (Press 'F1' key and type 'CTAGS:Search');
 
 ** Enjoy!**

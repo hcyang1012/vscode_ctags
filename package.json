@@ -2,7 +2,7 @@
 	"name": "ctags",
 	"displayName": "ctags",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "hcyang",
 	"engines": {
 		"vscode": "0.10.x"

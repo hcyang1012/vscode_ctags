@@ -13,5 +13,5 @@
 
 
 ### Etc
-* Source : (github)[https://github.com/hcyang1012/vscode_ctags]
+* Source : [github](https://github.com/hcyang1012/vscode_ctags)
 ** Enjoy!**

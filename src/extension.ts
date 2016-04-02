@@ -99,27 +99,60 @@ class CtagsController{
                 
         this._status = Status.LOADING;
         
-        let lineReader = require('readline').createInterface({
-            input: require('fs').createReadStream(this._ctags_tagpath)
-        });
+        let fs = require('fs')
+        let util = require('util')
+        let es = require('event-stream');
+                
+        let stream = fs.createReadStream(this._ctags_tagpath).pipe(es.split()).pipe(
+            es.mapSync(function(line){
+                stream.pause();
+                
+                if(line[0] != '!'){
+                    let tag:Tag = controller._extract_tag(line);
+                    if(tag != null){
+                        // Todo : Proof-of-concept, the first key only.
+                        if(!controller._tags.has(tag.symbol)){
+                            controller._tags[tag.symbol] = tag;
+                        }                        
+                    }
+
+                }                
+                
+                stream.resume();    
+            }).on('error',function(){
+                print_error("Error on loading ctag info.");
+                controller._status = Status.NONE;
+            }).on('end',function(){
+                print_info("Tag information has been loaded. You can search tag now");
+                controller._status = Status.LOADED;                
+            })
+        );
         
-        lineReader.on('line', function (line) {
-            controller._status = Status.LOADING;
-            let tag:Tag = controller._extract_tag(line);
+        
+        // let lineReader = require('readline').createInterface({
+        //     input: require('fs').createReadStream(this._ctags_tagpath)
+        // });
+        
+        // lineReader.on('line', function (line) {
+        //     controller._status = Status.LOADING;
+        //     let tag:Tag = controller._extract_tag(line);
             
-            // Todo : Proof-of-concept, the first key only.
-            if(!controller._tags.has(tag.symbol)){
-                controller._tags[tag.symbol] = tag;
-            }
-        });
+        //     // Todo : Proof-of-concept, the first key only.
+        //     if(!controller._tags.has(tag.symbol)){
+        //         controller._tags[tag.symbol] = tag;
+        //     }
+        // });
         
-        lineReader.on('close', function(){
-            print_info("Tag information has been loaded. You can search tag now");
-            controller._status = Status.LOADED;
-        });
+        // lineReader.on('close', function(){
+        //     print_info("Tag information has been loaded. You can search tag now");
+        //     controller._status = Status.LOADED;
+        // });
     }
     private _extract_tag(line : string){
         let info_array = line.split('\t');
+        if(info_array.length < 3){
+            return null;
+        }
         let info = {
             symbol: info_array[0],
             file: require('path').join(this._current_path,info_array[1]),

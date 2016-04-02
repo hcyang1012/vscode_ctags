@@ -18,6 +18,7 @@
 ### Release Note
 * 2016.03.06 0.1.0 : First release
 * 2016.04.02 0.2.0 : Update None-Generate-Load state sequence.
+* 2016.04.03 0.2.2 : Change ctag file caching method: use event-stream rather than line-by-line reading. 
 
 
 ** Enjoy! **

@@ -14,4 +14,10 @@
 
 ### Etc
 * Source : [github](https://github.com/hcyang1012/vscode_ctags)
-** Enjoy!**
+
+### Release Note
+* 2016.03.06 0.1.0 : First release
+* 2016.04.02 0.2.0 : Update None-Generate-Load state sequence.
+
+
+** Enjoy! **

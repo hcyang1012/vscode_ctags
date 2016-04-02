@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 }
 
-enum Status {NONE, LOADING, INITIALIZED};
+enum Status {NONE, GENERATING, GENERATED, LOADING, LOADED};
 interface Tag{
     symbol:string,
     file:string,
@@ -47,17 +47,33 @@ class CtagsController{
     private _ctags_tagfileName = "tags";
     private _ctags_tagpath;
     
-    private _current_path :string;
+    private _current_path :string = "";
     private _tag_buffer:string;
     
     private _status : Status;
     
     private _tags: Map<string,Tag> = new Map<string,Tag>();
+   
+   
+    private _set_tagpath(){
+        this._ctags_tagpath = require('path').join(this._current_path,this._ctags_tagfileName);
+    }
+    
+    private _get_tagpath() :string{
+        return this._ctags_tagpath;
+    }
+    
+    private _reset_if_need(){
+        if(this._current_path != workspace.rootPath){
+            this._current_path = workspace.rootPath;
+            this._status = Status.NONE;
+            this._tags.clear();
+        }
+    }
+    
     
     constructor(context : vscode.ExtensionContext){
-        this._current_path = workspace.rootPath;
-        this._status = Status.NONE;
-        this._tags.clear();
+        this._reset_if_need();
         
         let disposable = vscode.commands.registerCommand('extension.ctag_generate', ()=>{
             this.generate_tag(); 
@@ -69,22 +85,29 @@ class CtagsController{
         });
         context.subscriptions.push(disposable); 
                 
+        this._ctags_tagpath = require('path').join(this._current_path,this._ctags_tagfileName);
         console.log("CTag Extension has been initialized");    
     }
     
     private _load_tags(){
-        this._ctags_tagpath = require('path').join(this._current_path,this._ctags_tagfileName);
+        if(this._status == Status.LOADING){
+            /* Already in loading, do not run again.*/
+            return;
+        }     
+        let controller :CtagsController = this;
+
+                
+        this._status = Status.LOADING;
         
         let lineReader = require('readline').createInterface({
             input: require('fs').createReadStream(this._ctags_tagpath)
         });
-
-        let controller :CtagsController = this;
+        
         lineReader.on('line', function (line) {
             controller._status = Status.LOADING;
             let tag:Tag = controller._extract_tag(line);
             
-            // Todo : Proof-of-concept, first key only.
+            // Todo : Proof-of-concept, the first key only.
             if(!controller._tags.has(tag.symbol)){
                 controller._tags[tag.symbol] = tag;
             }
@@ -92,7 +115,7 @@ class CtagsController{
         
         lineReader.on('close', function(){
             print_info("Tag information has been loaded. You can search tag now");
-            controller._status = Status.INITIALIZED;
+            controller._status = Status.LOADED;
         });
     }
     private _extract_tag(line : string){
@@ -136,41 +159,63 @@ class CtagsController{
             this._search_tag_on_doc(info);            
         }else{
             print_error("Cannot find the symbol:" + targetSymbol);
-        }
-         
+        } 
     }
     
     public search(){
-        if(this._status != Status.INITIALIZED){
-            print_info("Loading tag info.. Please wait for a while and try again");
-            this.generate_tag();
-            return;
-        }
+        this._reset_if_need();
         
-        let controller :CtagsController = this;       
-            vscode.window.showInputBox("Input the symbol name").then(function(targetSymbol){
-            controller._tag_search(targetSymbol);
-        });   
+        let controller :CtagsController = this;
+        var fs = require("fs");
+        fs.exists(this._get_tagpath(),function(exists){
+            if(!exists){
+                print_error("Cannot find ctag file. Please run CTAGS:Generate command first.");
+            } else {                
+                if(controller._status != Status.LOADED){
+                    print_info("Loading tag info.. Please wait for a while and try again");
+                    controller._load_tags();
+                    return;
+                } else {  
+                    vscode.window.showInputBox("Input the symbol name").then(function(targetSymbol){
+                        controller._tag_search(targetSymbol);
+                    });                      
+                }                  
+            }
+        }); 
     }
     public generate_tag(){
+        
+        this._reset_if_need();
+        
         let controller :CtagsController = this;
         
+        switch(this._status){
+            /* In doing something, do not run again. just return */
+            case Status.GENERATING:
+            case Status.LOADING:
+                return;
+        }
+        
+        this._status = Status.LOADING;
         let exec = require('child_process').exec;   
         let command :string = this._ctag_command + ' ' + this._ctags_option;
         
         //Run ctag;
+        print_info("Generating ctag file...");
         exec(command,{cwd:controller._current_path},function(err,stdout,stderr){
+            print_info("Ctag generation has benn completed. Loading the tag file low..");
+            controller._status = Status.GENERATED;
             controller._load_tags();
         });     
     }
-    
-
 }
 
 function print_error(msg :string){
     window.showErrorMessage(msg);
+    console.error(msg);
 }
 
 function print_info(msg :string){
     window.showInformationMessage(msg);
+    console.log(msg);
 }

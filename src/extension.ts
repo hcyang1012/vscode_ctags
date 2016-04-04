@@ -3,8 +3,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import {Selection, Position, DecorationRenderOptions, Range, Diagnostic, workspace, window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
-import {CTAG_Manager} from "./ctag_manager";
-import {print_error, print_info} from "./notification";
+import * as CTAG_Manager from "./ctag_manager";
+import * as notification from './notification';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -35,7 +35,7 @@ export function deactivate() {
 
 
 class Extension{
-    private ctag_manager : CTAG_Manager;
+    private ctag_manager : CTAG_Manager.CTAG_Manager;
     
     constructor(context : vscode.ExtensionContext){
         let disposable = vscode.commands.registerCommand('extension.ctag_generate', ()=>{
@@ -48,14 +48,14 @@ class Extension{
         });
         context.subscriptions.push(disposable); 
         
-        this.ctag_manager = new CTAG_Manager();
+        this.ctag_manager = new CTAG_Manager.CTAG_Manager();
         console.log("CTag Extension has been initialized");    
     }
     public search(){
         let parent:Extension = this;
         vscode.window.showInputBox("Input the symbol name").then(function(targetSymbol){                    
             parent.ctag_manager.search(targetSymbol, function(msg){
-                print_info(msg);
+                notification.print_info(msg);
             });             
         });
     }

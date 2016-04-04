@@ -1,3 +1,4 @@
+'use strict';
 
 export function test_file_size(file_path : string, max_size:number){
     let fs = require("fs");
@@ -11,6 +12,7 @@ export function test_file_size(file_path : string, max_size:number){
     }
     return false;
 }
+
 export function file_exists(file_path : string) : boolean{
     let fs = require("fs");
     try{

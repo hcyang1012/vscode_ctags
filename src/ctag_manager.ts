@@ -2,16 +2,15 @@
 'use strict';
 import * as vscode from 'vscode';
 import {Selection, Position, DecorationRenderOptions, Range, Diagnostic, workspace, window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
-import {print_error, print_info} from "./notification";
-import {file_exists, parse_file_line, test_file_size} from "./file_manager";
-
-
+import * as notification from "./notification";
+import * as file_manager from "./file_manager";
     
 const  CTAG_COMMAND = "ctags";
 const  CTAG_OPTION = "-R -F";
 const  CTAGS_TAG_FILE_NAME = "tags";  
 const LARGE_FILE_SIZE_BYTE : number = (10*1024*1024); // 10MB
-export enum Status {NONE, GENERATING, GENERATED, LOADING, LOADED};
+
+enum Status {NONE, GENERATING, GENERATED, LOADING, LOADED};
 interface Tag{
     symbol:string,
     file:string,
@@ -51,13 +50,13 @@ export class CTAG_Manager{
         let manager :CTAG_Manager = this;           
         this._status = Status.LOADING;
         
-        if(!test_file_size(this._ctags_tagpath, LARGE_FILE_SIZE_BYTE)){
-            print_error("Can't load large ctag file larger than " + LARGE_FILE_SIZE_BYTE / 1024/1024 + "MB. Loading has been cancelled");
+        if(!file_manager.test_file_size(this._ctags_tagpath, LARGE_FILE_SIZE_BYTE)){
+            notification.print_error("Can't load large ctag file larger than " + LARGE_FILE_SIZE_BYTE / 1024/1024 + "MB. Loading has been cancelled");
             return;
         }
         
         
-        parse_file_line(this._ctags_tagpath,
+        file_manager.parse_file_line(this._ctags_tagpath,
             function(line : string){
                 if(line[0] != '!'){
                     let tag:Tag = manager._extract_tag(line);
@@ -70,11 +69,11 @@ export class CTAG_Manager{
                 }                  
             },
             function(){ // Error
-                print_error("Error on loading ctag info.");
+                notification.print_error("Error on loading ctag info.");
                 manager._status = Status.NONE;                
             },
             function(){ // Success
-                print_info("Tag information has been loaded. You can search tag now");
+                notification.print_info("Tag information has been loaded. You can search tag now");
                 manager._status = Status.LOADED;                  
             }
         );
@@ -102,8 +101,6 @@ export class CTAG_Manager{
     }
 
     private _search_tag_on_doc(tag_info :Tag){
-        let controller :CTAG_Manager = this;
-
         workspace.openTextDocument(tag_info.file).then(function(doc){
             window.showTextDocument(doc).then(function(editor){
                 let text : string = doc.getText();            
@@ -111,10 +108,9 @@ export class CTAG_Manager{
                 let end : Position = doc.positionAt(text.indexOf(tag_info.pattern) + tag_info.pattern.length);
                 let range = new Range(start,end);
                 editor.selection = new Selection(start,end);
-            })
-            
-        },function(error){
-            window.showErrorMessage("Cannot find the symbol : " + tag_info.symbol);
+                })
+            },function(error){
+                window.showErrorMessage("Cannot find the symbol : " + tag_info.symbol);
         });        
     }
     
@@ -123,7 +119,7 @@ export class CTAG_Manager{
         if(info){
             this._search_tag_on_doc(info);            
         }else{
-            print_error("Cannot find the symbol:" + targetSymbol);
+            notification.print_error("Cannot find the symbol:" + targetSymbol);
         } 
     }
     
@@ -139,7 +135,7 @@ export class CTAG_Manager{
         this._reset_if_need();
         var fs = require("fs");
         
-        if(file_exists(this._get_tagpath())){
+        if(file_manager.file_exists(this._get_tagpath())){
             error("Cannot read ctag file. Please run CTAGS:Generate command first.");
         }else{
             if(this._status != Status.LOADED){
@@ -155,7 +151,7 @@ export class CTAG_Manager{
     public generate_tag(){
         this._reset_if_need();
         
-        let manager :CTAG_Manager = this;
+        let parent :CTAG_Manager = this;
         
         switch(this._status){
             /* In doing something, do not run again. just return */
@@ -169,11 +165,11 @@ export class CTAG_Manager{
         let command :string = CTAG_COMMAND + ' ' + CTAG_OPTION;
         
         //Run ctag;
-        print_info("Generating ctag file...");
-        exec(command,{cwd:manager._current_path},function(err,stdout,stderr){
-            print_info("Ctag generation has benn completed. Loading the tag file low..");
-            manager._status = Status.GENERATED;
-            manager._load_tags();
+        notification.print_info("Generating ctag file...");
+        exec(command,{cwd:parent._current_path},function(err,stdout,stderr){
+            notification.print_info("Ctag generation has benn completed. Loading the tag file low..");
+            parent._status = Status.GENERATED;
+            parent._load_tags();
         });              
     }  
 }   

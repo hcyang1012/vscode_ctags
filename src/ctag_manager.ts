@@ -8,7 +8,7 @@ import * as file_manager from "./file_manager";
 const  CTAG_COMMAND = "ctags";
 const  CTAG_OPTION = "-R -F";
 const  CTAGS_TAG_FILE_NAME = "tags";  
-const LARGE_FILE_SIZE_BYTE : number = (10*1024*1024); // 10MB
+const LARGE_FILE_SIZE_BYTE : number = (50*1024*1024); // 50MB
 
 enum Status {NONE, GENERATING, GENERATED, LOADING, LOADED};
 interface Tag{

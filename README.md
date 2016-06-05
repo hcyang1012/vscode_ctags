@@ -21,6 +21,6 @@
 * 2016.04.03 0.2.2 : Change ctag file caching method: use event-stream rather than line-by-line reading. 
 * 2016.04.04 0.2.3 : A little bit refactoring worked. Large file support(>=10MB) is disabled.
 * 2016.04.06 0.2.4 : Update large file limit (10MB->50MB). (Temporary)
-
+* 2016.06.05 0.2.5 : Fix minor bugs..
 
 ** Enjoy! **

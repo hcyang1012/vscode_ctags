@@ -135,7 +135,7 @@ export class CTAG_Manager{
         this._reset_if_need();
         var fs = require("fs");
         
-        if(file_manager.file_exists(this._get_tagpath())){
+        if(!file_manager.file_exists(this._get_tagpath())){
             error("Cannot read ctag file. Please run CTAGS:Generate command first.");
         }else{
             if(this._status != Status.LOADED){
@@ -167,7 +167,7 @@ export class CTAG_Manager{
         //Run ctag;
         notification.print_info("Generating ctag file...");
         exec(command,{cwd:parent._current_path},function(err,stdout,stderr){
-            notification.print_info("Ctag generation has benn completed. Loading the tag file low..");
+            notification.print_info("Ctag generation has been completed. Loading the tag file low..");
             parent._status = Status.GENERATED;
             parent._load_tags();
         });              

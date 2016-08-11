@@ -2,7 +2,7 @@
 	"name": "ctags",
 	"displayName": "ctags",
 	"description": "",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"publisher": "hcyang",
 	"engines": {
 		"vscode": "0.10.x"
@@ -13,7 +13,8 @@
 	"activationEvents": [
 		"onCommand:extension.sayHello",
         "onCommand:extension.ctag_generate",
-        "onCommand:extension.ctag_search"
+        "onCommand:extension.ctag_search",
+		"onLanguage:c"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
@@ -39,6 +40,7 @@
 	"devDependencies": {
 		"typescript": "^1.7.5",
 		"vscode": "^0.11.0",
-		"event-stream": "^3.3.2"
+		"event-stream": "^3.3.2",
+		"vscode-languageclient": "^2.2.1"
 	}
 }

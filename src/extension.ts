@@ -3,6 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import {Selection, Position, DecorationRenderOptions, Range, Diagnostic, workspace, window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
+import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 import * as CTAG_Manager from "./ctag_manager";
 import * as notification from './notification';
 
@@ -19,6 +20,12 @@ export function activate(context: vscode.ExtensionContext) {
 	// The commandId parameter must match the command field in package.json
     
    
+    // Options to control the language client
+    let clientOptions: LanguageClientOptions = {
+        // Register the server for C source codes
+        documentSelector: ['C'],
+    }   
+
 	let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
 		// The code you place here will be executed every time your command is executed
 

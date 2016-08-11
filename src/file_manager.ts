@@ -16,7 +16,7 @@ export function test_file_size(file_path : string, max_size:number){
 export function file_exists(file_path : string) : boolean{
     let fs = require("fs");
     try{
-        fs.accessSync(this._get_tagpath(), fs.R_OK);
+        fs.accessSync(file_path, fs.R_OK);
     }catch(e){
         return false;
     }
